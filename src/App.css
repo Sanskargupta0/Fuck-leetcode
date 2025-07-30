@@ -1,0 +1,319 @@
+
+#root {
+  max-width: 100%;
+  margin: 0 auto;
+  padding: 0;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+/* Stacking cards effect */
+.perspective-1000 {
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+/* Improve animation performance */
+.absolute {
+  backface-visibility: hidden;
+}
+
+/* Card shadows */
+.shadow-elegant {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.shadow-elegant-hover {
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+/* Add new card animation */
+@keyframes card-enter {
+  from {
+    opacity: 0;
+    transform: translateY(30px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.animate-card-enter {
+  animation: card-enter 0.4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .button-primary, .button-secondary {
+    padding: 0.75rem 1.25rem;
+    font-size: 0.875rem;
+    width: 100%; /* Full width buttons on mobile */
+  }
+  
+  /* Enhanced padding for mobile */
+  .section-container {
+    padding: 1.5rem 1rem;
+  }
+  
+  /* Better touch targets for mobile */
+  .nav-link, button, a {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  /* Adjust text sizes for mobile */
+  .section-title {
+    font-size: 1.75rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .section-subtitle {
+    font-size: 1rem !important;
+  }
+}
+
+/* Robot Showcase Section */
+.robot-image-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+  transition: transform 0.5s ease;
+}
+
+.robot-image-container:hover {
+  transform: scale(1.02);
+}
+
+.feature-item {
+  background-color: white;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+}
+
+.feature-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.12);
+}
+
+/* Enhanced mobile optimizations */
+@media (max-width: 640px) {
+  .robot-image-container {
+    border-radius: 16px;
+  }
+  
+  .feature-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  /* Optimize spacing in card layouts */
+  .card, .feature-card {
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Better form inputs on mobile */
+  input, textarea, select {
+    font-size: 16px !important; /* Prevents iOS zoom on focus */
+    padding: 0.75rem !important;
+    min-height: 44px; /* Better touch targets */
+  }
+  
+  /* Better button sizes on mobile */
+  button {
+    min-height: 44px;
+    padding: 0.75rem 1rem;
+  }
+  
+  /* Fix for mobile overflow issues */
+  .overflow-hidden {
+    overflow-x: hidden;
+  }
+  
+  /* Make rounded corners more subtle on mobile */
+  .rounded-3xl {
+    border-radius: 1rem !important;
+  }
+  
+  /* Better text sizes for mobile */
+  .text-5xl {
+    font-size: 2.25rem !important;
+  }
+  
+  .text-6xl {
+    font-size: 2.5rem !important;
+  }
+  
+  /* Improved spacing for mobile */
+  .py-20 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+  }
+  
+  .py-16 {
+    padding-top: 2.5rem !important;
+    padding-bottom: 2.5rem !important;
+  }
+  
+  /* Better hero section on mobile */
+  section[id="hero"] {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+  }
+}
+
+/* Tablet-specific optimizations */
+@media (min-width: 641px) and (max-width: 1024px) {
+  .feature-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  /* Better spacing for tablets */
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+  
+  /* Optimize text sizes for tablets */
+  .text-6xl {
+    font-size: 3.5rem;
+  }
+  
+  .text-5xl {
+    font-size: 2.75rem;
+  }
+}
+
+/* Desktop optimizations */
+@media (min-width: 1025px) {
+  /* Better parallax effects on desktop */
+  .parallax {
+    transform: translateY(var(--parallax-y, 0));
+    transition: transform 0.1s ease-out;
+  }
+  
+  /* Improved hover effects */
+  .hover\:scale-105:hover {
+    transform: scale(1.05);
+  }
+  
+  .hover\:translate-x-1:hover {
+    transform: translateX(0.25rem);
+  }
+}
+
+/* Disable parallax on mobile for better performance */
+@media (max-width: 768px) {
+  .parallax {
+    transform: none !important;
+    transition: none !important;
+  }
+  
+  /* Disable complex animations on mobile */
+  .animate-fade-in {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+  
+  /* Simplify transforms on mobile */
+  .transform {
+    transform: none !important;
+  }
+}
+
+/* Improved loading states */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Better focus states for accessibility */
+.focus\:outline-none:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.focus\:ring-2:focus {
+  ring-width: 2px;
+}
+
+/* Improved contrast for better readability */
+@media (prefers-contrast: high) {
+  .text-muted-foreground {
+    opacity: 1;
+    color: rgb(0 0 0 / 0.8);
+  }
+  
+  .border-dark-border {
+    border-color: rgb(0 0 0 / 0.3);
+  }
+}
+
+/* Reduced motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-in,
+  .transition-all,
+  .transform,
+  .parallax {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+  }
+}
