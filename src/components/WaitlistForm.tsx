@@ -7,15 +7,23 @@ import { addToWaitlist, fetchWaitlistCount } from "@/lib/api";
 const WaitlistForm = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [waitlistCount, setWaitlistCount] = useState("Let me check the waitlist count...");
+  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
   const { toast } = useToast();
 
   useEffect(() => {
     // Fetch current waitlist count on component mount
+    setWaitlistCount("Let me check the waitlist count...");
+    
     fetchWaitlistCount().then(count => {
       if (count > 0) {
-        setWaitlistCount(String(count));
+        setWaitlistCount(count);
+      } else {
+        // Fallback to initial count if API fails
+        setWaitlistCount(193);
       }
+    }).catch(() => {
+      // Fallback to initial count if API fails
+      setWaitlistCount(193);
     });
   }, []);
 
@@ -43,7 +51,7 @@ const WaitlistForm = () => {
         });
         setEmail("");
         // Update waitlist count
-        setWaitlistCount(prev => prev + 1);
+        setWaitlistCount(prev => typeof prev === 'number' ? prev + 1 : 92739);
       } else {
         throw new Error("Failed to submit");
       }
@@ -77,7 +85,9 @@ const WaitlistForm = () => {
           {/* Waitlist count display */}
           <div className="mb-6 sm:mb-8">
             <p className="text-sm sm:text-base text-muted-foreground">
-              <span className="text-neon-purple font-semibold">{waitlistCount.toLocaleString()}</span> developers already waiting
+              <span className="text-neon-purple font-semibold">
+                {typeof waitlistCount === 'number' ? waitlistCount.toLocaleString() : waitlistCount}
+              </span> developers already waiting
             </p>
           </div>
         </div>

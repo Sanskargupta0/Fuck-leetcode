@@ -3,13 +3,21 @@ import { Button } from "@/components/ui/button";
 import { fetchWaitlistCount } from "@/lib/api";
 
 const FuckLeetcodeHero = () => {
-  const [waitlistCount, setWaitlistCount] = useState("Let me check the waitlist count...");
+  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
 
   useEffect(() => {
+    setWaitlistCount("Let me check the waitlist count...");
+    
     fetchWaitlistCount().then(count => {
       if (count > 0) {
-        setWaitlistCount(String(count));
+        setWaitlistCount(count);
+      } else {
+        // Fallback to initial count if API fails
+        setWaitlistCount(193);
       }
+    }).catch(() => {
+      // Fallback to initial count if API fails
+      setWaitlistCount(193);
     });
   }, []);
   const scrollToWaitlist = () => {
@@ -53,7 +61,7 @@ const FuckLeetcodeHero = () => {
             Join the Waiting List
           </Button>
           <p className="text-sm sm:text-base text-muted-foreground">
-            <span className="text-neon-purple">🎯</span> {waitlistCount.toLocaleString()} developers already signed up
+            <span className="text-neon-purple">🎯</span> {typeof waitlistCount === 'number' ? waitlistCount.toLocaleString() : waitlistCount} developers already signed up
           </p>
         </div>
 

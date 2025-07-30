@@ -3,13 +3,25 @@ import React, { useState, useEffect } from "react";
 import { fetchWaitlistCount } from "@/lib/api";
 
 const Footer = () => {
-  const [waitlistCount, setWaitlistCount] = useState("Let me check the waitlist count...");
+  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    setIsLoading(true);
+    setWaitlistCount("Let me check the waitlist count...");
+    
     fetchWaitlistCount().then(count => {
       if (count > 0) {
-        setWaitlistCount(String(count));
+        setWaitlistCount(count);
+      } else {
+        // Fallback to initial count if API fails
+        setWaitlistCount(193);
       }
+      setIsLoading(false);
+    }).catch(() => {
+      // Fallback to initial count if API fails
+      setWaitlistCount(193);
+      setIsLoading(false);
     });
   }, []);
   return (
@@ -66,7 +78,9 @@ const Footer = () => {
               </div>
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-neon-purple rounded-full mr-2 flex-shrink-0"></div>
-                <span className="text-muted-foreground">{waitlistCount.toLocaleString()} developers waiting</span>
+                <span className="text-muted-foreground">
+                  {typeof waitlistCount === 'number' ? waitlistCount.toLocaleString() : waitlistCount} developers waiting
+                </span>
               </div>
               <div className="flex items-center">
                 <div className="w-2 h-2 bg-neon-blue rounded-full mr-2 flex-shrink-0"></div>
