@@ -1,25 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Button } from "@/components/ui/button";
-import { fetchWaitlistCount } from "@/lib/api";
+import { useWaitlistCount } from "@/hooks/use-waitlist-count";
 
 const FuckLeetcodeHero = () => {
-  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
-
-  useEffect(() => {
-    setWaitlistCount("Let me check the waitlist count...");
-    
-    fetchWaitlistCount().then(count => {
-      if (count > 0) {
-        setWaitlistCount(count);
-      } else {
-        // Fallback to initial count if API fails
-        setWaitlistCount(193);
-      }
-    }).catch(() => {
-      // Fallback to initial count if API fails
-      setWaitlistCount(193);
-    });
-  }, []);
+  const { waitlistCount } = useWaitlistCount();
   const scrollToWaitlist = () => {
     const waitlistSection = document.getElementById("waitlist");
     waitlistSection?.scrollIntoView({ behavior: "smooth" });

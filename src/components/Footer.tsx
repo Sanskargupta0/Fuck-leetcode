@@ -1,29 +1,9 @@
 
-import React, { useState, useEffect } from "react";
-import { fetchWaitlistCount } from "@/lib/api";
+import React from "react";
+import { useWaitlistCount } from "@/hooks/use-waitlist-count";
 
 const Footer = () => {
-  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
-  const [isLoading, setIsLoading] = useState(false);
-
-  useEffect(() => {
-    setIsLoading(true);
-    setWaitlistCount("Let me check the waitlist count...");
-    
-    fetchWaitlistCount().then(count => {
-      if (count > 0) {
-        setWaitlistCount(count);
-      } else {
-        // Fallback to initial count if API fails
-        setWaitlistCount(193);
-      }
-      setIsLoading(false);
-    }).catch(() => {
-      // Fallback to initial count if API fails
-      setWaitlistCount(193);
-      setIsLoading(false);
-    });
-  }, []);
+  const { waitlistCount } = useWaitlistCount();
   return (
     <footer className="py-8 sm:py-12 px-4 sm:px-6 lg:px-8 border-t border-dark-border">
       <div className="max-w-6xl mx-auto">

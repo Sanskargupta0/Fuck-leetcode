@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { addToWaitlist, fetchWaitlistCount } from "@/lib/api";
+import { useWaitlistCount } from "@/hooks/use-waitlist-count";
+import { addToWaitlist } from "@/lib/api";
 
 const WaitlistForm = () => {
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [waitlistCount, setWaitlistCount] = useState<number | string>(193);
+  const { waitlistCount, incrementCount } = useWaitlistCount();
   const { toast } = useToast();
-
-  useEffect(() => {
-    // Fetch current waitlist count on component mount
-    setWaitlistCount("Let me check the waitlist count...");
-    
-    fetchWaitlistCount().then(count => {
-      if (count > 0) {
-        setWaitlistCount(count);
-      } else {
-        // Fallback to initial count if API fails
-        setWaitlistCount(193);
-      }
-    }).catch(() => {
-      // Fallback to initial count if API fails
-      setWaitlistCount(193);
-    });
-  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,18 +26,31 @@ const WaitlistForm = () => {
     setIsLoading(true);
 
     try {
-      const success = await addToWaitlist(email);
+      const result = await addToWaitlist(email);
 
-      if (success) {
+      if (result.success) {
         toast({
           title: "👉 Boom! You just became 87% more hirable 🚀",
           description: "We'll let you know when we're ready to automate your LeetCode grind.",
         });
         setEmail("");
         // Update waitlist count
-        setWaitlistCount(prev => typeof prev === 'number' ? prev + 1 : 92739);
+        incrementCount();
       } else {
-        throw new Error("Failed to submit");
+        // Handle specific error cases
+        if (result.message?.includes("already registered")) {
+          toast({
+            title: "Hey, you're already in! 👀",
+            description: "This email is already on the waitlist. No need to sign up again!",
+            variant: "destructive",
+          });
+        } else {
+          toast({
+            title: "Shit. Something broke. 💥",
+            description: result.message || "Try again, or just email us directly. We're humans (mostly).",
+            variant: "destructive",
+          });
+        }
       }
     } catch (error) {
       toast({

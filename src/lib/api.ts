@@ -1,32 +1,18 @@
 export interface WaitlistData {
-  "Emails": string;
-  "Date": string;
-  "Total People": string;
+  email: string;
+  date: string;
+  totalCount: number;
 }
 
 // Environment variables for API configuration
-const NOCODEAPI_BASE_URL = import.meta.env.VITE_NOCODEAPI_BASE_URL;
-const NOCODEAPI_API_KEY = import.meta.env.VITE_NOCODEAPI_API_KEY;
-const SHEET_TAB_ID = import.meta.env.VITE_SHEET_TAB_ID;
-const WAITLIST_ROW_ID = import.meta.env.VITE_WAITLIST_ROW_ID;
-const WAITLIST_FIELD = import.meta.env.VITE_WAITLIST_FIELD;
-const WAITLIST_FILTER_VALUE = import.meta.env.VITE_WAITLIST_FILTER_VALUE;
+const BACKEND_API_URL = import.meta.env.VITE_BACKEND_API_URL || 'http://localhost:3000';
+// Ensure the API version is set correctly
+const API_VERSION = import.meta.env.VITE_API_VERSION || 'v1';
 
 // Validate required environment variables
 const validateEnvVars = (): boolean => {
-  const requiredVars = [
-    { name: 'VITE_NOCODEAPI_BASE_URL', value: NOCODEAPI_BASE_URL },
-    { name: 'VITE_NOCODEAPI_API_KEY', value: NOCODEAPI_API_KEY },
-    { name: 'VITE_SHEET_TAB_ID', value: SHEET_TAB_ID },
-    { name: 'VITE_WAITLIST_ROW_ID', value: WAITLIST_ROW_ID },
-    { name: 'VITE_WAITLIST_FIELD', value: WAITLIST_FIELD },
-    { name: 'VITE_WAITLIST_FILTER_VALUE', value: WAITLIST_FILTER_VALUE }
-  ];
-
-  const missingVars = requiredVars.filter(({ value }) => !value);
-  
-  if (missingVars.length > 0) {
-    console.error('Missing required environment variables:', missingVars.map(v => v.name));
+  if (!BACKEND_API_URL) {
+    console.error('Missing required environment variable: VITE_BACKEND_API_URL');
     return false;
   }
   
@@ -40,43 +26,83 @@ export const fetchWaitlistCount = async (): Promise<number> => {
       return 0;
     }
 
-    const url = `${NOCODEAPI_BASE_URL}/${NOCODEAPI_API_KEY}?tabId=${SHEET_TAB_ID}&row_id=${WAITLIST_ROW_ID}&fields=${encodeURIComponent(WAITLIST_FIELD)}&filterValue=${encodeURIComponent(WAITLIST_FILTER_VALUE)}`;
-    
-    const response = await fetch(url);
-    
+    const response = await fetch(`${BACKEND_API_URL}/api/${API_VERSION}/waitlist/count` );
+
     if (!response.ok) {
       throw new Error('Failed to fetch waitlist count');
     }
     
-    const data: WaitlistData = await response.json();
-    const count = parseInt(data["Total People"]) || 0;
-    return count;
+    const data = await response.json();
+    
+    // Handle response structure: { success: true, data: { count: number }, message: string }
+    if (data.success && data.data && typeof data.data.count === 'number') {
+      return data.data.count;
+    }
+    
+    // Fallback for direct count structure
+    return data.count || 0;
   } catch (error) {
     console.error('Error fetching waitlist count:', error);
     return 0; // Return 0 as fallback
   }
 };
 
-export const addToWaitlist = async (email: string): Promise<boolean> => {
+export interface WaitlistResponse {
+  success: boolean;
+  message?: string;
+  error?: {
+    statusCode: number;
+    status: string;
+    isOperational: boolean;
+  };
+}
+
+export const addToWaitlist = async (email: string): Promise<WaitlistResponse> => {
   try {
     if (!validateEnvVars()) {
       console.error('Environment variables not configured properly');
-      return false;
+      return {
+        success: false,
+        message: 'Environment variables not configured properly'
+      };
     }
 
-    const url = `${NOCODEAPI_BASE_URL}/${NOCODEAPI_API_KEY}?tabId=${SHEET_TAB_ID}`;
-    
-    const response = await fetch(url, {
+    const response = await fetch(`${BACKEND_API_URL}/api/${API_VERSION}/waitlist/add`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify([[email, new Date().toISOString()]])
+      body: JSON.stringify({ email })
     });
     
-    return response.ok;
+    const data = await response.json();
+    
+    if (response.ok) {
+      return {
+        success: true,
+        message: data.message || 'Successfully added to waitlist'
+      };
+    } else {
+      // Handle specific error cases
+      if (response.status === 409) {
+        return {
+          success: false,
+          message: data.message || 'This email is already registered in the waitlist',
+          error: data.error
+        };
+      }
+      
+      return {
+        success: false,
+        message: data.message || 'Failed to add to waitlist',
+        error: data.error
+      };
+    }
   } catch (error) {
     console.error('Error adding to waitlist:', error);
-    return false;
+    return {
+      success: false,
+      message: 'Network error occurred while adding to waitlist'
+    };
   }
 };
